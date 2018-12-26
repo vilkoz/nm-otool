@@ -39,17 +39,15 @@ void	print_symtab(struct symtab_command *sym, char *ptr)
 	char				*string_array;
 	int					i;
 
+	printf("symoff: %d\n", sym->symoff);
 	nlist = (void*)ptr + sym->symoff;
-	string_array = ptr + sym->stroff;
+	string_array = (void*)ptr + sym->stroff;
 	i = -1;
 	while (++i < (int)sym->nsyms)
 	{
-		printf("%c %s | %08x %08x %08x %08llx \n", get_type((void*)(&(nlist[i]))), string_array + nlist[i].n_un.n_strx,
-		nlist[i].n_type,
-		nlist[i].n_sect,
-		nlist[i].n_desc,
-		nlist[i].n_value
-		);
+		if (nlist[i].n_type & N_STAB)
+			continue ;
+		printf("%c %s\n", get_type((void*)(&(nlist[i]))), string_array + nlist[i].n_un.n_strx);
 	}
 }
 
