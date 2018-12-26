@@ -2,7 +2,7 @@ NAME= nm
 
 CC = gcc
 
-COMP_FLAGS = -Wall -Wextra -Werror
+COMP_FLAGS = -Wall -Wextra -Werror -g
 LINK_FLAGS = 
 
 all: $(NAME)
