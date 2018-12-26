@@ -8,6 +8,31 @@
 
 #define ERROR(x) {fprintf(stderr, x "\n"); return(EXIT_FAILURE);}
 
+char	get_type(struct nlist_64 *entry)
+{
+	static char		labels[] = {
+		'U',
+		'A',
+		'-',
+		'I'
+		};
+	static uint16_t	values[] = {
+		N_UNDF,
+		N_ABS,
+		N_STAB,
+		N_INDR
+		};
+	int				i;
+
+	i = -1;
+	while (++i < (int)(sizeof(labels) / sizeof(labels[0])))
+	{
+		if ((entry->n_type & N_TYPE) == values[i])
+			return (labels[i]);
+	}
+	return ('?');
+}
+
 void	print_symtab(struct symtab_command *sym, char *ptr)
 {
 	struct nlist_64		*nlist;
@@ -17,9 +42,14 @@ void	print_symtab(struct symtab_command *sym, char *ptr)
 	nlist = (void*)ptr + sym->symoff;
 	string_array = ptr + sym->stroff;
 	i = -1;
-	while (++i < sym->nsyms)
+	while (++i < (int)sym->nsyms)
 	{
-		printf("%s\n", string_array + nlist[i].n_un.n_strx);
+		printf("%c %s | %08x %08x %08x %08llx \n", get_type((void*)(&(nlist[i]))), string_array + nlist[i].n_un.n_strx,
+		nlist[i].n_type,
+		nlist[i].n_sect,
+		nlist[i].n_desc,
+		nlist[i].n_value
+		);
 	}
 }
 
@@ -49,7 +79,7 @@ void	handle_64(char *ptr)
 
 void	nm(char *ptr)
 {
-	int		magic_num;
+	uint32_t	magic_num;
 
 	magic_num = *(int*)ptr;
 	if (magic_num == MH_MAGIC_64)
@@ -68,7 +98,8 @@ int		main(int ac, char **av)
 		ERROR("Can't open file");
 	if (fstat(fd, &file_stat) < 0)
 		ERROR("Can't stat file");
-	if ((ptr = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0)) == MAP_FAILED)
+	if ((ptr = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0))
+			== MAP_FAILED)
 		ERROR("mmap error");
 	nm(ptr);
 	if (munmap(ptr, file_stat.st_size) < 0)
