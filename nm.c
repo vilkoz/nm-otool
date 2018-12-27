@@ -127,8 +127,7 @@ void	handle_64(char *ptr)
 			break ;
 		} else if (lc->cmd == LC_SEGMENT_64)
 		{
-			struct segment_command_64	*segment = (struct segment_command_64*)lc;
-			save_sections(segment);
+			save_sections((struct segment_command_64*)lc);
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}
@@ -141,6 +140,8 @@ void	nm(char *ptr)
 	magic_num = *(int*)ptr;
 	if (magic_num == MH_MAGIC_64)
 		handle_64(ptr);
+	else
+		fprintf(stderr, "File format is not supported\n");
 }
 
 int		main(int ac, char **av)
