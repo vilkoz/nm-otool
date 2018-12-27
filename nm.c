@@ -19,12 +19,14 @@ char	get_section_char(uint8_t n_sect)
 	const char		*names[] = {
 		"__text",
 		"__data",
-		"__bss"
+		"__bss",
+		"__const"
 	};
 	const char		labels[] = {
 		'T',
 		'D',
-		'B'
+		'b',
+		's'
 	};
 	char			*sect_name;
 	int				i;
@@ -78,8 +80,8 @@ void	print_symtab(struct symtab_command *sym, char *ptr)
 		if (nlist[i].n_type & N_STAB)
 			continue ;
 		printf("%c %s\n", get_type((void*)(&(nlist[i]))), string_array + nlist[i].n_un.n_strx);
-		if (nlist[i].n_sect != NO_SECT)
-			printf("\tsection: %s\n", g_sections[nlist[i].n_sect-1]);
+		//if (nlist[i].n_sect != NO_SECT)
+		//	printf("\tsection: %s\n", g_sections[nlist[i].n_sect-1]);
 	}
 }
 
@@ -90,7 +92,7 @@ void	append_section(struct section_64 *sect)
 	g_n_sections++;
 }
 
-void	print_sections(struct segment_command_64 *seg)
+void	save_sections(struct segment_command_64 *seg)
 {
 	int					i;
 	struct section_64	*sec_table;
@@ -125,8 +127,8 @@ void	handle_64(char *ptr)
 		} else if (lc->cmd == LC_SEGMENT_64)
 		{
 			struct segment_command_64	*segment = (struct segment_command_64*)lc;
-			printf("segname: %s\n", segment->segname);
-			print_sections(segment);
+			//printf("segname: %s\n", segment->segname);
+			save_sections(segment);
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}
