@@ -7,7 +7,9 @@ LINK_FLAGS =
 
 all: $(NAME)
 
-SRC = nm.c
+SRC = nm.c				\
+	  elf_64.c			\
+	  sections.c		\
 
 BINS = $(SRC:.c=.o)
 
