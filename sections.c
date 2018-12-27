@@ -1,9 +1,14 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
+#include <stdlib.h> //printf
 
 static char 	**g_sections = NULL;
 static size_t	g_n_sections = 0;
 
+char	**get_sections(void)
+{
+	return (g_sections);
+}
 
 void	append_section(struct section_64 *sect)
 {

@@ -2,7 +2,9 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 
+#include <stdio.h> //printf
 #include <string.h> //strcmp
+#include "sections.h"
 
 char	get_section_char(uint8_t n_sect)
 {
@@ -21,7 +23,7 @@ char	get_section_char(uint8_t n_sect)
 	char			*sect_name;
 	int				i;
 
-	sect_name = g_sections[n_sect - 1];
+	sect_name = get_sections()[n_sect - 1];
 	i = -1;
 	while (++i < (int)(sizeof(labels) / sizeof(labels[0])))
 	{
