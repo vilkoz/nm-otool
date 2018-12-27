@@ -79,9 +79,10 @@ void	print_symtab(struct symtab_command *sym, char *ptr)
 	{
 		if (nlist[i].n_type & N_STAB)
 			continue ;
-		printf("%c %s\n", get_type((void*)(&(nlist[i]))), string_array + nlist[i].n_un.n_strx);
-		//if (nlist[i].n_sect != NO_SECT)
-		//	printf("\tsection: %s\n", g_sections[nlist[i].n_sect-1]);
+		if ((nlist[i].n_type & N_TYPE) == N_UNDF)
+			printf("                 %c %s\n", get_type((void*)(&(nlist[i]))), string_array + nlist[i].n_un.n_strx);
+		else
+			printf("%016llx %c %s\n", nlist[i].n_value, get_type((void*)(&(nlist[i]))), string_array + nlist[i].n_un.n_strx);
 	}
 }
 
@@ -127,7 +128,6 @@ void	handle_64(char *ptr)
 		} else if (lc->cmd == LC_SEGMENT_64)
 		{
 			struct segment_command_64	*segment = (struct segment_command_64*)lc;
-			//printf("segname: %s\n", segment->segname);
 			save_sections(segment);
 		}
 		lc = (void*)lc + lc->cmdsize;
