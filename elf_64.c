@@ -3,8 +3,8 @@
 #include <mach-o/nlist.h>
 
 #include <stdio.h> //printf
-#include <string.h> //strcmp
 #include "sections.h"
+#include "libft.h"
 
 char	get_section_char(uint8_t n_sect)
 {
@@ -27,7 +27,7 @@ char	get_section_char(uint8_t n_sect)
 	i = -1;
 	while (++i < (int)(sizeof(labels) / sizeof(labels[0])))
 	{
-		if (!strcmp(names[i], sect_name))
+		if (!ft_strcmp(names[i], sect_name))
 			return (labels[i]);
 	}
 	return ('?');
@@ -72,14 +72,20 @@ void	print_symtab(struct symtab_command *sym, char *ptr)
 		if (nlist[i].n_type & N_STAB)
 			continue ;
 		if ((nlist[i].n_type & N_TYPE) == N_UNDF)
-			printf("                 %c %s\n",
-					get_type((void*)(&(nlist[i]))),
-					string_array + nlist[i].n_un.n_strx);
+		{
+			ft_putstr("                 ");
+			ft_putchar(get_type((void*)(&(nlist[i]))));
+			ft_putchar(' ');
+			ft_putendl(string_array + nlist[i].n_un.n_strx);
+		}
 		else
-			printf("%016llx %c %s\n",
-					nlist[i].n_value,
-					get_type((void*)(&(nlist[i]))),
-					string_array + nlist[i].n_un.n_strx);
+		{
+			ft_puthex_fill(nlist[i].n_value, '0', 16);
+			ft_putchar(' ');
+			ft_putchar(get_type((void*)(&(nlist[i]))));
+			ft_putchar(' ');
+			ft_putendl(string_array + nlist[i].n_un.n_strx);
+		}
 	}
 }
 
@@ -104,8 +110,7 @@ void	handle_64(char *ptr)
 			break ;
 		} else if (lc->cmd == LC_SEGMENT_64)
 		{
-			struct segment_command_64	*segment = (struct segment_command_64*)lc;
-			save_sections(segment);
+			save_sections((struct segment_command_64*)lc);
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}
