@@ -2,7 +2,7 @@
 
 void	ft_puthex(unsigned long long n)
 {
-	static const char	chars[] = "0123456789ABCDEF";
+	static const char	chars[] = "0123456789abcdef";
 	char				buf[sizeof(unsigned long long) * 8 + 1];
 	int					i;
 	unsigned long long	copy;
