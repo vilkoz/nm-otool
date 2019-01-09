@@ -1,12 +1,5 @@
-#include <stdio.h>
-
-typedef struct		s_array_slice
-{
-	void			*base;
-	size_t			size;
-	int				low;
-	int				high;
-}					t_array_slice;
+#include <sys/types.h>
+#include "qsort_private.h"
 
 static void		swap(void *a, void *b, size_t size)
 {
@@ -33,7 +26,7 @@ static int		partition(t_array_slice s, int (*cmp)(const void*, const void*))
 	j = s.low - 1;
 	while (++j <= s.high - 1)
 	{
-		if (cmp(pivot, (void*)(((char *)s.base) + (j * s.size))))
+		if (cmp((void*)(((char *)s.base) + (j * s.size)), pivot) < 0)
 		{
 			i++;
 			swap((void*)(((char *)s.base) + (i * s.size)),
@@ -56,37 +49,8 @@ static void		quick_sort(t_array_slice s, int (*cmp)(const void*, const void*))
 	quick_sort((t_array_slice){s.base, s.size, pi + 1, s.high}, cmp);
 }
 
-void			ft_qsort(void *base, size_t nelem, size_t size, int (*cmp)(const void*, const void*))
+void			ft_qsort(void *base, size_t nelem, size_t size,
+					int (*cmp)(const void*, const void*))
 {
 	quick_sort((t_array_slice){base, size, 0, nelem - 1}, cmp);
 }
-//#define TESTING
-#ifdef TESTING
-#define ARRAY_SIZE(a) (sizeof((a)) / sizeof((a)[0]))
-
-static int		cmp(const void *a, const void *b)
-{
-	int		n1;
-	int		n2;
-	
-	n1 = ((int*)a)[0];
-	n2 = ((int*)b)[0];
-	return (n1 > n2);
-}
-
-void	test(int *a) 
-{
-	ft_qsort((void*)&(a[0]), 5, sizeof(a[0]), cmp);
-	for (int i = 0; i < 5; i++)
-		printf("%d ", a[i]);
-	puts("");
-}
-
-
-int main(void)
-{
-	test((int[5]){1, 2, 3, 4, 5});
-	test((int[5]){3, 2, 1, 4, 5});
-	test((int[5]){1, 2, 4, 3, 5});
-}
-#endif

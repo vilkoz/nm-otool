@@ -17,7 +17,6 @@ SRC = nm.c				\
 	  elf_64.c			\
 	  sections.c		\
 	  symbol_entry.c	\
-	  qsort.c			\
 
 BINS = $(SRC:.c=.o)
 

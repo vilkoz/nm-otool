@@ -98,6 +98,7 @@ SRCS = memory/ft_memset.c						\
 	   vector/vector_add.c						\
 	   vector/vector_get.c						\
 	   vector/vector_set.c						\
+	   algo/qsort.c								\
 
 BIN_DIR = bin/
 
