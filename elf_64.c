@@ -95,9 +95,11 @@ static int	sort_function(const void *a, const void* b)
 	return (ft_strcmp(name1, name2));
 }
 
+void			ft_qsort(void *base, size_t nelem, size_t size, int (*cmp)(const void*, const void*));
+
 t_vector	*sort_symbol_entries(t_vector *v)
 {
-	qsort(v->elems, v->size, sizeof(t_symbol_entry_64), &sort_function);
+	ft_qsort(v->elems, v->size, sizeof(t_symbol_entry_64), &sort_function);
 	return (v);
 }
 
