@@ -31,3 +31,9 @@ void	save_sections(struct segment_command_64 *seg)
 		append_section(sec_table + i);
 	}
 }
+
+void	free_sections(void)
+{
+	if (g_sections)
+		free(g_sections);
+}
