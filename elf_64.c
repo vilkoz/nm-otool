@@ -126,6 +126,77 @@ void	print_symtab(struct symtab_command *sym, char *ptr)
 	}
 }
 
+#include <stdio.h>
+
+unsigned int		read_uleb(char **uleb128)
+{
+	unsigned int		res;
+	int					shift;
+	char				byte;
+
+	res = 0;
+	shift = 0;
+	while (1)
+	{
+		byte = *((*uleb128)++);
+		res |= (byte & 0x7f) << shift;
+		if (((byte & 0x80) >> 7) == 0)
+			break ;
+		shift += 7;
+	}
+	return res;
+}
+
+void	print_node(char *offset, char *start, size_t trie_size)
+{
+	char		branches;
+	int			child_offset;
+	int			i;
+	int			terminal_size;
+
+	if (offset >= start + trie_size)
+		return ;
+	printf("%p node: %x\n", offset, offset[0]);
+	if (offset[0] == 0)
+	{
+		branches = (++offset)[0];
+		printf("BRANCHES: %d\n", branches);
+		i = -1;
+		while (++i < branches)
+		{
+			printf("branch %d: ", i);
+			while (*(++offset) != 0)
+				printf("%c", offset[0]);
+			puts("");
+			++offset;
+			child_offset = read_uleb(&offset);
+			print_node(start + child_offset, start, trie_size);
+		}
+	}
+	else
+	{
+		terminal_size = read_uleb(&offset);
+		printf("TERM\nflags: 0x%x ", *offset);
+		offset++;
+		terminal_size = read_uleb(&offset);
+		printf("offset: 0x%x\n", terminal_size);
+		++offset;
+		terminal_size = read_uleb(&offset);
+		printf(" child nodes: %d\n", terminal_size);
+	}
+}
+
+void	handle_dysymtab(struct dyld_info_command* dysym, char *ptr)
+{
+	char		*export;
+	size_t		export_size;
+
+	export = ptr + dysym->export_off;
+	export_size = dysym->export_size;
+	printf("export: %p, %zu\n", export, export_size);
+	print_node(export, export, export_size);
+}
+
 void	handle_64(char *ptr)
 {
 	int						ncmds;
@@ -139,16 +210,21 @@ void	handle_64(char *ptr)
 	i = -1;
 	while (++i < ncmds)
 	{
+		printf("lc->cmd: 0x%x\n", lc->cmd);
 		if (lc->cmd == LC_SYMTAB)
 		{
 			struct symtab_command	*smtab;
 			smtab = (struct symtab_command*)lc;
 			print_symtab(smtab, ptr);
 			break ;
-		} else if (lc->cmd == LC_SEGMENT_64)
-		{
+		}
+		else if (lc->cmd == LC_SEGMENT_64)
 			save_sections((struct segment_command_64*)lc);
+		else if (lc->cmd == LC_DYLD_INFO_ONLY)
+		{
+			handle_dysymtab((struct dyld_info_command*)lc, ptr);
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}
+	free_sections();
 }
