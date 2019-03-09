@@ -1,12 +1,12 @@
-#include <stdlib.h> //qsort
-// TODO: write own qsort
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 
-//#include <stdio.h> //printf
+#include <stdio.h> //printf
 #include "sections.h"
 #include "libft.h"
 #include "symbol_entry.h"
+
+#define IS_EXTERNAL(a) ((a) & N_EXT)
 
 char	get_section_char(uint8_t n_sect)
 {
@@ -19,8 +19,8 @@ char	get_section_char(uint8_t n_sect)
 	const char		labels[] = {
 		'T',
 		'D',
-		'b',
-		's'
+		'B',
+		'S'
 	};
 	char			*sect_name;
 	int				i;
@@ -32,7 +32,7 @@ char	get_section_char(uint8_t n_sect)
 		if (!ft_strcmp(names[i], sect_name))
 			return (labels[i]);
 	}
-	return ('?');
+	return ('S');
 }
 
 char	get_type(struct nlist_64 *entry)
@@ -48,6 +48,7 @@ char	get_type(struct nlist_64 *entry)
 		N_INDR
 		};
 	int				i;
+	char			res;
 
 	i = -1;
 	while (++i < (int)(sizeof(labels) / sizeof(labels[0])))
@@ -56,7 +57,10 @@ char	get_type(struct nlist_64 *entry)
 			return (labels[i]);
 	}
 	if (entry->n_sect != NO_SECT)
-		return (get_section_char(entry->n_sect));
+	{
+		res = get_section_char(entry->n_sect);
+		return (IS_EXTERNAL(entry->n_type) ? res : ft_tolower(res));
+	}
 	return ('?');
 }
 
@@ -89,13 +93,16 @@ static int	sort_function(const void *a, const void* b)
 {
 	char	*name1;
 	char	*name2;
+	int		res;
 
 	name1 = ((t_symbol_entry_64*)a)->name;
 	name2 = ((t_symbol_entry_64*)b)->name;
-	return (ft_strcmp(name1, name2));
+	res = ft_strcmp(name1, name2);
+	if (res != 0)
+		return (res);
+	return (((t_symbol_entry_64*)a)->nlist_entry->n_value -
+		((t_symbol_entry_64*)b)->nlist_entry->n_value);
 }
-
-void			ft_qsort(void *base, size_t nelem, size_t size, int (*cmp)(const void*, const void*));
 
 t_vector	*sort_symbol_entries(t_vector *v)
 {

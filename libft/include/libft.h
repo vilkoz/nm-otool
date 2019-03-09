@@ -26,5 +26,6 @@
 # include "get_next_line.h"
 # include "queue.h"
 # include "vector.h"
+# include "algo.h"
 
 #endif

@@ -17,7 +17,7 @@ void	nm(char *ptr)
 	if (magic_num == MH_MAGIC_64)
 		handle_64(ptr);
 	else
-		fprintf(stderr, "File format is not supported\n");
+		fprintf(stderr, "MY_NM: File format is not supported\n");
 }
 
 int		main(int ac, char **av)
