@@ -2,5 +2,6 @@
 # define ELF_64_H
 
 void	handle_64(char *ptr);
+void	handle_32(char *ptr);
 
 #endif

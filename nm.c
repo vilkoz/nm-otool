@@ -4,7 +4,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <stdint.h>
-#include "elf_64.h"
+#include "arch.h"
 #include <mach-o/loader.h>
 
 #define ERROR(x) {fprintf(stderr, x "\n"); return(EXIT_FAILURE);}
@@ -16,6 +16,8 @@ void	nm(char *ptr)
 	magic_num = *(int*)ptr;
 	if (magic_num == MH_MAGIC_64)
 		handle_64(ptr);
+	else if (magic_num == MH_MAGIC)
+		handle_32(ptr);
 	else
 		fprintf(stderr, "MY_NM: File format is not supported\n");
 }

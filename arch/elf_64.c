@@ -5,66 +5,9 @@
 #include "sections.h"
 #include "libft.h"
 #include "symbol_entry.h"
+#include "common.h"
 
-#define IS_EXTERNAL(a) ((a) & N_EXT)
-
-char	get_section_char(uint8_t n_sect)
-{
-	const char		*names[] = {
-		"__text",
-		"__data",
-		"__bss",
-		"__const"
-	};
-	const char		labels[] = {
-		'T',
-		'D',
-		'B',
-		'S'
-	};
-	char			*sect_name;
-	int				i;
-
-	sect_name = get_sections()[n_sect - 1];
-	i = -1;
-	while (++i < (int)(sizeof(labels) / sizeof(labels[0])))
-	{
-		if (!ft_strcmp(names[i], sect_name))
-			return (labels[i]);
-	}
-	return ('S');
-}
-
-char	get_type(struct nlist_64 *entry)
-{
-	const char		labels[] = {
-		'U',
-		'A',
-		'I'
-		};
-	const uint16_t	values[] = {
-		N_UNDF,
-		N_ABS,
-		N_INDR
-		};
-	int				i;
-	char			res;
-
-	i = -1;
-	while (++i < (int)(sizeof(labels) / sizeof(labels[0])))
-	{
-		if ((entry->n_type & N_TYPE) == values[i])
-			return (labels[i]);
-	}
-	if (entry->n_sect != NO_SECT)
-	{
-		res = get_section_char(entry->n_sect);
-		return (IS_EXTERNAL(entry->n_type) ? res : ft_tolower(res));
-	}
-	return ('?');
-}
-
-t_vector	*fill_symbol_entries(struct symtab_command *sym, char *ptr)
+static t_vector	*fill_symbol_entries(struct symtab_command *sym, char *ptr)
 {
 	t_vector			*l;
 	struct nlist_64		*nlist;
@@ -83,7 +26,7 @@ t_vector	*fill_symbol_entries(struct symtab_command *sym, char *ptr)
 			continue ;
 		tmp = new_s_symbol_entry_64(nlist + i,
 			string_array + nlist[i].n_un.n_strx,
-			get_type((void*)(&(nlist[i]))));
+			get_section_type((nlist + i)->n_type, (nlist + i)->n_sect));
 		vector_add(l, (void*)tmp);
 	}
 	return (l);
@@ -104,20 +47,14 @@ static int	sort_function(const void *a, const void* b)
 		((t_symbol_entry_64*)b)->nlist_entry->n_value);
 }
 
-t_vector	*sort_symbol_entries(t_vector *v)
-{
-	ft_qsort(v->elems, v->size, sizeof(t_symbol_entry_64), &sort_function);
-	return (v);
-}
-
-void	print_symtab(struct symtab_command *sym, char *ptr)
+static void	print_symtab(struct symtab_command *sym, char *ptr)
 {
 	t_vector			*v;
 	int					i;
 	t_symbol_entry_64	*tmp;
 
 	v = fill_symbol_entries(sym, ptr);
-	v = sort_symbol_entries(v);
+	v = sort_symbol_entries(v, sizeof(t_symbol_entry_64), &sort_function);
 	i = -1;
 	while (++i < (int)v->size)
 	{
@@ -154,7 +91,7 @@ void	handle_64(char *ptr)
 			break ;
 		} else if (lc->cmd == LC_SEGMENT_64)
 		{
-			save_sections((struct segment_command_64*)lc);
+			save_sections_64((struct segment_command_64*)lc);
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}
