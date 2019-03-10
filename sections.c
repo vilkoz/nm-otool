@@ -56,5 +56,6 @@ void		free_sections(void)
 	{
 		free(g_sections);
 		g_sections = NULL;
+		g_n_sections = 0;
 	}
 }

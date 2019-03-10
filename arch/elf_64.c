@@ -78,7 +78,6 @@ void	handle_64(char *ptr)
 	struct load_command		*lc;
 
 	header = (struct mach_header_64*)ptr;
-	printf("%s: %d\n", __func__, __LINE__);
 	ncmds = header->ncmds;
 	lc = (void*)ptr + sizeof(struct mach_header_64);
 	i = -1;
@@ -96,7 +95,5 @@ void	handle_64(char *ptr)
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}
-	printf("%s: %d\n", __func__, __LINE__);
 	free_sections();
-	printf("%s: %d\n", __func__, __LINE__);
 }

@@ -11,7 +11,7 @@
 
 #define ERROR(x) {fprintf(stderr, x "\n"); return(EXIT_FAILURE);}
 
-void	nm(char *ptr)
+void	nm(char *ptr, const char *filename)
 {
 	uint64_t	magic_num;
 
@@ -24,7 +24,7 @@ void	nm(char *ptr)
 	{
 		magic_num = *(uint64_t*)ptr;
 		if (ft_strncmp((char*)&magic_num, ARMAG, SARMAG) == 0)
-			handle_archive(ptr);
+			handle_archive(ptr, filename);
 		else
 			fprintf(stderr, "MY_NM: File format is not supported 0x%016llx\n", magic_num);
 	}
@@ -40,11 +40,10 @@ int		process_file(const char *filename)
 		ERROR("Can't open file");
 	if (fstat(fd, &file_stat) < 0)
 		ERROR("Can't stat file");
-	printf("file size: %lld\n", file_stat.st_size);
 	if ((ptr = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0))
 			== MAP_FAILED)
 		ERROR("mmap error");
-	nm(ptr);
+	nm(ptr, filename);
 	if (munmap(ptr, file_stat.st_size) < 0)
 		ERROR("munmap error");
 	return (EXIT_SUCCESS);
