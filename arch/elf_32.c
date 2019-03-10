@@ -95,4 +95,5 @@ void	handle_32(char *ptr)
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}
+	free_sections();
 }

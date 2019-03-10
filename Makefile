@@ -16,6 +16,7 @@ $(LIBFT):
 SRC = nm.c				\
 	  arch/elf_64.c		\
 	  arch/elf_32.c		\
+	  arch/archive.c	\
 	  arch/common.c		\
 	  sections.c		\
 	  symbol_entry.c	\

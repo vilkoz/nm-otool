@@ -53,5 +53,8 @@ void		save_sections_32(struct segment_command *seg)
 void		free_sections(void)
 {
 	if (g_sections)
+	{
 		free(g_sections);
+		g_sections = NULL;
+	}
 }

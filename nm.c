@@ -4,41 +4,60 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <stdint.h>
-#include "arch.h"
 #include <mach-o/loader.h>
+#include <ar.h>
+#include "arch.h"
+#include "libft.h"
 
 #define ERROR(x) {fprintf(stderr, x "\n"); return(EXIT_FAILURE);}
 
 void	nm(char *ptr)
 {
-	uint32_t	magic_num;
+	uint64_t	magic_num;
 
-	magic_num = *(int*)ptr;
+	magic_num = *(uint32_t*)ptr;
 	if (magic_num == MH_MAGIC_64)
 		handle_64(ptr);
 	else if (magic_num == MH_MAGIC)
 		handle_32(ptr);
 	else
-		fprintf(stderr, "MY_NM: File format is not supported\n");
+	{
+		magic_num = *(uint64_t*)ptr;
+		if (ft_strncmp((char*)&magic_num, ARMAG, SARMAG) == 0)
+			handle_archive(ptr);
+		else
+			fprintf(stderr, "MY_NM: File format is not supported 0x%016llx\n", magic_num);
+	}
 }
 
-int		main(int ac, char **av)
+int		process_file(const char *filename)
 {
 	int				fd;
 	char			*ptr;
 	struct stat		file_stat;
 
-	if (ac != 2)
-		ERROR("NO ARGUMENT");
-	if ((fd = open(av[1], O_RDONLY)) < 0)
+	if ((fd = open(filename, O_RDONLY)) < 0)
 		ERROR("Can't open file");
 	if (fstat(fd, &file_stat) < 0)
 		ERROR("Can't stat file");
+	printf("file size: %lld\n", file_stat.st_size);
 	if ((ptr = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0))
 			== MAP_FAILED)
 		ERROR("mmap error");
 	nm(ptr);
 	if (munmap(ptr, file_stat.st_size) < 0)
 		ERROR("munmap error");
+	return (EXIT_SUCCESS);
+}
+
+int		main(int ac, char **av)
+{
+	int		i;
+
+	if (ac < 2)
+		ERROR("NO ARGUMENT");
+	i = 0;
+	while (++i < ac)
+		process_file(av[i]);
 	return (EXIT_SUCCESS);
 }

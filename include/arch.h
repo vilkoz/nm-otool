@@ -3,5 +3,6 @@
 
 void	handle_64(char *ptr);
 void	handle_32(char *ptr);
+void	handle_archive(char *ptr);
 
 #endif
