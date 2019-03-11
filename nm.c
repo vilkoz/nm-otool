@@ -8,6 +8,7 @@
 #include <ar.h>
 #include "arch.h"
 #include "libft.h"
+#include "safe_ptr.h"
 
 #define ERROR(x) {fprintf(stderr, x "\n"); return(EXIT_FAILURE);}
 
@@ -43,6 +44,8 @@ int		process_file(const char *filename)
 	if ((ptr = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0))
 			== MAP_FAILED)
 		ERROR("mmap error");
+	set_file_size(file_stat.st_size);
+	set_safe_ptr_base(ptr);
 	nm(ptr, filename);
 	if (munmap(ptr, file_stat.st_size) < 0)
 		ERROR("munmap error");

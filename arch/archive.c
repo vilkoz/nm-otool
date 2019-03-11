@@ -1,6 +1,7 @@
 #include <stdio.h> // printf
 #include <ar.h>
 #include "libft.h"
+#include "safe_ptr.h"
 
 void	nm(char *ptr, char *filename);
 
@@ -16,11 +17,6 @@ void print_byte_string(char *str, size_t size)
 	printf(#n": "); \
 	print_byte_string(h->n, s); \
 	putchar(' ');
-
-struct test {
-	uint32_t	a;
-	uint32_t	b;
-};
 
 static void parse_ar_header(char **ptr, size_t *num)
 {
@@ -40,7 +36,6 @@ static void parse_ar_header(char **ptr, size_t *num)
 	*num = *(uint64_t*)(*ptr + sizeof(struct ar_hdr) + 20 + 8) / 8;
 	printf("sizeof(struct ar_hdr): %zu\n",sizeof(struct ar_hdr));
 	printf("num: %zu\n", *num);
-	printf("sizeof: %zu\n", sizeof(struct test) );
 	*ptr += offset + sizeof(struct ar_hdr);
 }
 
@@ -69,17 +64,19 @@ static void print_header(char **ptr, const char *filename)
 	ft_putstr("):\n");
 	//puts("");
 	nm(*ptr + 8 + sizeof(struct ar_hdr) + 20, 0);
-	*ptr += offset + sizeof(struct ar_hdr);
+	*ptr = safe_ptr(*ptr + offset + sizeof(struct ar_hdr));
 }
 
 void	handle_archive(char *ptr, const char *filename)
 {
 	size_t		num;
-	int			i;
 
 	num = 0;
 	parse_ar_header(&ptr, &num);
-	i = -1;
-	while (++i < (int)num)
+	while (1)
+	{
 		print_header(&ptr, filename);
+		if (ptr == NULL)
+			break ;
+	}
 }

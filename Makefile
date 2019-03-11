@@ -20,6 +20,7 @@ SRC = nm.c				\
 	  arch/common.c		\
 	  sections.c		\
 	  symbol_entry.c	\
+	  safe_ptr.c		\
 
 BIN_DIR = bin
 
