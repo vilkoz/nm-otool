@@ -20,6 +20,7 @@ SRC = nm.c				\
 	  arch/elf_32.c		\
 	  arch/archive.c	\
 	  arch/common.c		\
+	  arch/fat_binary.c	\
 	  sections.c		\
 	  symbol_entry.c	\
 	  safe_ptr.c		\

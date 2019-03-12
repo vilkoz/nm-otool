@@ -1,4 +1,4 @@
-#include <stdio.h>
+#include <stdio.h> //fprintf
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -23,6 +23,8 @@ void	nm(char *ptr, const char *filename)
 		handle_64(ptr);
 	else if (magic_num == MH_MAGIC)
 		handle_32(ptr);
+	else if (magic_num == 0xbebafeca)
+		handle_fat_binary(ptr);
 	else
 	{
 		magic_num = *(uint64_t*)ptr;
