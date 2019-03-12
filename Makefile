@@ -2,6 +2,8 @@ NAME= nm
 
 CC = gcc
 
+MAKE = make
+
 COMP_FLAGS = -Wall -Wextra -Werror -g -I libft -I include
 LINK_FLAGS = -L libft -lft
 
@@ -11,7 +13,7 @@ LFT_DIR = libft
 LIBFT = $(LFT_DIR)/libft.a
 
 $(LIBFT):
-	make -j8 -C $(LFT_DIR)
+	$(MAKE) -j8 -C $(LFT_DIR)
 
 SRC = nm.c				\
 	  arch/elf_64.c		\
@@ -35,11 +37,11 @@ $(NAME): $(BINS) $(LIBFT)
 
 clean:
 	/bin/rm -f $(BINS)
-	make -C $(LFT_DIR) clean
+	$(MAKE) -C $(LFT_DIR) clean
 
 fclean: clean
 	/bin/rm -f $(NAME)
-	make -C $(LFT_DIR) fclean
+	$(MAKE) -C $(LFT_DIR) fclean
 
 re: fclean all
 

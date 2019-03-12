@@ -16,6 +16,8 @@ void	nm(char *ptr, const char *filename)
 {
 	uint64_t	magic_num;
 
+	if (ptr == NULL)
+		return ;
 	magic_num = *(uint32_t*)ptr;
 	if (magic_num == MH_MAGIC_64)
 		handle_64(ptr);
