@@ -28,6 +28,7 @@ static t_vector	*fill_symbol_entries(struct symtab_command *sym, char *ptr)
 			string_array + nlist[i].n_un.n_strx,
 			get_section_type((nlist + i)->n_type, (nlist + i)->n_sect));
 		vector_add(l, (void*)tmp);
+		free(tmp);
 	}
 	return (l);
 }
@@ -68,6 +69,7 @@ static void	print_symtab(struct symtab_command *sym, char *ptr)
 		ft_putchar(' ');
 		ft_putendl(tmp->name);
 	}
+	vector_delete(&v, NULL);
 }
 
 void	handle_32(char *ptr)
