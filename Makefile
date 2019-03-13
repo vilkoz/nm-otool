@@ -16,8 +16,8 @@ $(LIBFT):
 	$(MAKE) -j8 -C $(LFT_DIR)
 
 SRC = nm.c				\
-	  arch/elf_64.c		\
-	  arch/elf_32.c		\
+	  arch/mach_o_64.c		\
+	  arch/mach_o_32.c		\
 	  arch/archive.c	\
 	  arch/common.c		\
 	  arch/fat_binary.c	\
