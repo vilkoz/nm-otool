@@ -1,23 +1,17 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <mach-o/fat.h>
+#include "safe_ptr.h"
 
-struct fat_hdr
-{
-	uint32_t	magic_num;
-	uint32_t	ar_num;
-};
-
-struct fat_elem_hdr
-{
-	uint32_t	cpu_type;
-	uint32_t	cpu_subtype;
-	uint32_t	ar_offset;
-	uint32_t	ar_size;
-	uint32_t	is_aligned;
-};
-
-#define print_elem(s, e) \
+//#define DEBUG
+#ifdef DEBUG
+# define print_elem(s, e) \
 	printf(#e": %i ", be2le(s->e));
+#else
+# define print_elem(s, e)
+#endif
+
+void	nm(char *ptr, const char *filename);
 
 uint32_t be2le(uint32_t i)
 {
@@ -29,27 +23,36 @@ uint32_t be2le(uint32_t i)
 			);
 }
 
-void	nm(char *ptr, const char *filename);
-
 void handle_fat_binary(void *ptr)
 {
-	struct fat_hdr *hdr;
-	struct fat_elem_hdr *fat_elem;
+	struct fat_header	*hdr;
+	struct fat_arch		*fat_elem;
+	int					i;
 
 	hdr = ptr;
-	print_elem(hdr, ar_num);
-	puts("");
-	printf("le2be num: %x\n", be2le(hdr->ar_num));
-	fat_elem = ptr + sizeof(struct fat_hdr);
-	for (size_t i=0; i < be2le(hdr->ar_num); i++)
+	fat_elem = ptr + sizeof(struct fat_header);
+	i = -1;
+	while (++i < (int)be2le(hdr->nfat_arch))
 	{
-		print_elem(fat_elem, cpu_type);
-		print_elem(fat_elem, cpu_subtype);
-		print_elem(fat_elem, ar_offset);
-		print_elem(fat_elem, ar_size);
-		print_elem(fat_elem, is_aligned);
-		puts("");
-		nm(ptr + be2le(fat_elem->ar_offset), 0);
+		if (be2le(fat_elem->cputype) == 0x10007)
+			nm(safe_ptr(ptr + be2le(fat_elem->offset), be2le(fat_elem->size)), 0);
+		fat_elem++;
+	}
+}
+
+void handle_fat_binary_64(void *ptr)
+{
+	struct fat_header	*hdr;
+	struct fat_arch_64	*fat_elem;
+	int					i;
+
+	hdr = ptr;
+	fat_elem = ptr + sizeof(struct fat_header);
+	i = -1;
+	while (++i < (int)be2le(hdr->nfat_arch))
+	{
+		if (be2le(fat_elem->cputype) == 0x10007)
+			nm(safe_ptr(ptr + be2le(fat_elem->offset), be2le(fat_elem->size)), 0);
 		fat_elem++;
 	}
 }

@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <stdint.h>
 #include <mach-o/loader.h>
+#include <mach-o/fat.h>
 #include <ar.h>
 #include "arch.h"
 #include "libft.h"
@@ -19,12 +20,14 @@ void	nm(char *ptr, const char *filename)
 	if (ptr == NULL)
 		return ;
 	magic_num = *(uint32_t*)ptr;
-	if (magic_num == MH_MAGIC_64)
+	if (magic_num == MH_MAGIC_64 || magic_num == MH_CIGAM_64)
 		handle_64(ptr);
-	else if (magic_num == MH_MAGIC)
+	else if (magic_num == MH_MAGIC || magic_num == MH_CIGAM)
 		handle_32(ptr);
-	else if (magic_num == 0xbebafeca)
+	else if (magic_num == FAT_MAGIC || magic_num == FAT_CIGAM)
 		handle_fat_binary(ptr);
+	else if (magic_num == FAT_MAGIC_64 || magic_num == FAT_CIGAM_64)
+		handle_fat_binary_64(ptr);
 	else
 	{
 		magic_num = *(uint64_t*)ptr;
