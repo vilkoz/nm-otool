@@ -18,6 +18,12 @@ void	set_safe_ptr_base(void *base)
 	g_safe_ptr_base = base;
 }
 
+void	clear_safe_ptr(void)
+{
+	g_file_size = 0;
+	g_safe_ptr_base = NULL;
+}
+
 void	*safe_ptr(void *ptr, size_t region_size)
 {
 	if (g_file_size == 0)

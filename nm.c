@@ -54,6 +54,7 @@ int		process_file(const char *filename)
 	set_file_size(file_stat.st_size);
 	set_safe_ptr_base(ptr);
 	nm(ptr, filename);
+	clear_safe_ptr();
 	if (munmap(ptr, file_stat.st_size) < 0)
 		ERROR("munmap error");
 	return (EXIT_SUCCESS);
