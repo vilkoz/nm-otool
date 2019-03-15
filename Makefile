@@ -24,6 +24,7 @@ SRC = nm.c				\
 	  sections.c		\
 	  symbol_entry.c	\
 	  safe_ptr.c		\
+	  endian.c			\
 
 BIN_DIR = bin
 
