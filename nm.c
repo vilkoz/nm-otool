@@ -65,7 +65,10 @@ int		main(int ac, char **av)
 	int		i;
 
 	if (ac < 2)
-		ERROR("NO ARGUMENT");
+	{
+		process_file("./a.out");
+		return (EXIT_SUCCESS);
+	}
 	i = 0;
 	while (++i < ac)
 		process_file(av[i]);
