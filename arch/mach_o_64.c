@@ -53,7 +53,6 @@ static void	print_symtab(struct symtab_command *sym, char *ptr)
 	t_vector			*v;
 	int					i;
 	t_symbol_entry_64	*tmp;
-	uint8_t				type;
 
 	v = fill_symbol_entries(sym, ptr);
 	v = sort_symbol_entries(v, sizeof(t_symbol_entry_64), &sort_function);
@@ -61,28 +60,14 @@ static void	print_symtab(struct symtab_command *sym, char *ptr)
 	while (++i < (int)v->size)
 	{
 		VECTOR_GET_TO(tmp, v, i);
-		type = tmp->nlist_entry->n_type;
-		if ((type & N_TYPE) == N_UNDF || (type & N_TYPE) == N_INDR)
+		if ((tmp->nlist_entry->n_type & N_TYPE) == N_UNDF)
 			ft_putstr("                ");
 		else
 			ft_puthex_fill(tmp->nlist_entry->n_value, '0', 16);
 		ft_putchar(' ');
 		ft_putchar(tmp->type);
 		ft_putchar(' ');
-/*
-<                  I _krb5_get_init_creds_opt_set_salt (indirect for _krb5_get_init_creds_opt_set_salt)
----
-> 0000000000003cb1 I _krb5_get_init_creds_opt_set_salt
-*/
-		ft_putstr(tmp->name);
-		if ((type & N_TYPE) == N_INDR)
-		{
-			ft_putstr(" (indirect for ");
-			ft_putstr(tmp->name);
-			ft_putendl(")");
-		}
-		else
-			ft_putchar('\n');
+		ft_putendl(tmp->name);
 	}
 	vector_delete(&v, NULL);
 }
