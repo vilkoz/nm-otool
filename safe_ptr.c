@@ -13,9 +13,11 @@ size_t	get_file_size(void)
 	return g_file_size;
 }
 
-void	set_safe_ptr_base(void *base)
+void	*safe_ptr_base(void *base)
 {
-	g_safe_ptr_base = base;
+	if (base != NULL)
+		g_safe_ptr_base = base;
+	return (g_safe_ptr_base);
 }
 
 void	clear_safe_ptr(void)

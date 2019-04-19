@@ -1,6 +1,7 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
 #include "libft.h"
+#include "otool.h"
 
 static char 	**g_sections = NULL;
 static size_t	g_n_sections = 0;
@@ -30,7 +31,13 @@ void		save_sections_64(struct segment_command_64 *seg)
 	while (++i < (int)seg->nsects)
 	{
 		sect = sec_table + i;
-		append_section(sect->sectname);
+		if (!get_otool_mode())
+			append_section(sect->sectname);
+		else if (!ft_strncmp(sect->sectname, "__text", sizeof("__text")))
+		{
+			print_text_section(sect);
+			break ;
+		}
 	}
 }
 

@@ -10,6 +10,7 @@
 #include "arch.h"
 #include "libft.h"
 #include "safe_ptr.h"
+#include "otool.h"
 
 #define ERROR(x) {fprintf(stderr, x "\n"); return(EXIT_FAILURE);}
 
@@ -52,7 +53,7 @@ int		process_file(const char *filename)
 			== MAP_FAILED)
 		ERROR("mmap error");
 	set_file_size(file_stat.st_size);
-	set_safe_ptr_base(ptr);
+	safe_ptr_base(ptr);
 	nm(ptr, filename);
 	clear_safe_ptr();
 	if (munmap(ptr, file_stat.st_size) < 0)
@@ -69,6 +70,9 @@ int		main(int ac, char **av)
 		process_file("./a.out");
 		return (EXIT_SUCCESS);
 	}
+	if (!ft_strncmp(av[0], "ft_otool", sizeof("ft_otool")) ||
+			!ft_strncmp(av[0], "./ft_otool", sizeof("./ft_otool")))
+		set_otool_mode(1);
 	i = 0;
 	while (++i < ac)
 		process_file(av[i]);

@@ -78,6 +78,7 @@ void	handle_32(char *ptr)
 	int						i;
 	struct mach_header		*header;
 	struct load_command		*lc;
+	struct symtab_command	*smtab;
 
 	header = (struct mach_header*)ptr;
 	ncmds = header->ncmds;
@@ -87,7 +88,6 @@ void	handle_32(char *ptr)
 	{
 		if (lc->cmd == LC_SYMTAB)
 		{
-			struct symtab_command	*smtab;
 			smtab = (struct symtab_command*)lc;
 			print_symtab(smtab, ptr);
 			break ;
