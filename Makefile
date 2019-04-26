@@ -27,6 +27,7 @@ SRC = nm.c				\
 	  safe_ptr.c		\
 	  endian.c			\
 	  otool.c			\
+	  otool_32.c		\
 
 BIN_DIR = bin
 

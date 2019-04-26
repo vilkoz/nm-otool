@@ -86,14 +86,14 @@ int		main(int ac, char **av)
 {
 	int		i;
 
+	if (!ft_strncmp(av[0], "ft_otool", sizeof("ft_otool")) ||
+			!ft_strncmp(av[0], "./ft_otool", sizeof("./ft_otool")))
+		set_otool_mode(1);
 	if (ac < 2)
 	{
 		process_file("./a.out");
 		return (EXIT_SUCCESS);
 	}
-	if (!ft_strncmp(av[0], "ft_otool", sizeof("ft_otool")) ||
-			!ft_strncmp(av[0], "./ft_otool", sizeof("./ft_otool")))
-		set_otool_mode(1);
 	i = 0;
 	while (++i < ac)
 		process_file(av[i]);

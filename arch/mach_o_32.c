@@ -6,6 +6,7 @@
 #include "libft.h"
 #include "symbol_entry.h"
 #include "common.h"
+#include "otool.h"
 
 static t_vector	*fill_symbol_entries(struct symtab_command *sym, char *ptr)
 {
@@ -78,7 +79,6 @@ void	handle_32(char *ptr)
 	int						i;
 	struct mach_header		*header;
 	struct load_command		*lc;
-	struct symtab_command	*smtab;
 
 	header = (struct mach_header*)ptr;
 	ncmds = header->ncmds;
@@ -88,12 +88,15 @@ void	handle_32(char *ptr)
 	{
 		if (lc->cmd == LC_SYMTAB)
 		{
-			smtab = (struct symtab_command*)lc;
-			print_symtab(smtab, ptr);
+			if (!get_otool_mode())
+				print_symtab((struct symtab_command*)lc, ptr);
 			break ;
 		} else if (lc->cmd == LC_SEGMENT)
 		{
-			save_sections_32((struct segment_command*)lc);
+			if (get_otool_mode())
+				otool_print_text_section_32((struct segment_command*)lc, ptr);
+			else
+				save_sections_32((struct segment_command*)lc);
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}
