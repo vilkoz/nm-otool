@@ -31,12 +31,12 @@ static void		prepare_buffer(char *buf, struct section_64 *sect,
 		if (i % 16 == 0)
 		{
 			buf[j++] = '\n';
-			ft_puthex_fill_mem((uint64_t)(sect->addr + i), '0', 16,
+			ft_puthex_fill_mem((uint64_t)(sect->addr + i), '0', OTOOL_PTR_LEN,
 					(void*)(buf + j));
-			j += 16;
+			j += OTOOL_PTR_LEN;
 			buf[j++] = '\t';
 		}
-		ft_puthex_fill_mem((unsigned char)*(text_start + i), '0', 2,
+		ft_puthex_fill_mem((unsigned char)*(text_start + i), '0', HEX_BYTE_LEN,
 				(void*)(buf + j));
 		j += 2;
 		buf[j++] = ' ';
