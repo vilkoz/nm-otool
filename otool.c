@@ -18,23 +18,12 @@ int				get_otool_mode(void)
 	return (g_otool_mode);
 }
 
-/*
-** output would be in the following format:
-** (\nOTOOL_PTR\x20(HEX_BYTE\x20)*BYTE_IN_LINE_COUNT)
-*/
-static void		print_text_section(struct section_64 *sect, const char* ptr)
+static void		prepare_buffer(char *buf, struct section_64 *sect,
+					const char *text_start)
 {
-	const char	*text_start = safe_ptr((char*)ptr + sect->offset, sect->size);
 	int			i;
 	int			j;
-	char		*buf;
 
-	buf = ft_strnew((sect->size / BYTE_IN_LINE_COUNT + 1)
-			* (1 + OTOOL_PTR_LEN + 1) + sect->size * (HEX_BYTE_LEN + 1));
-	if (!buf)
-		return (ft_putstr_fd("ft_otool: failed to allocate output buf\n", 2));
-	if (!text_start)
-		return (ft_putstr_fd("ft_otool: section > file size\n", 2));
 	i = -1;
 	j = 0;
 	while (++i < (int)sect->size)
@@ -53,6 +42,24 @@ static void		print_text_section(struct section_64 *sect, const char* ptr)
 		buf[j++] = ' ';
 	}
 	buf[j] = 0;
+}
+
+/*
+** output would be in the following format:
+** (\nOTOOL_PTR\x20(HEX_BYTE\x20)*BYTE_IN_LINE_COUNT)
+*/
+static void		print_text_section(struct section_64 *sect, const char* ptr)
+{
+	const char	*text_start = safe_ptr((char*)ptr + sect->offset, sect->size);
+	char		*buf;
+
+	buf = ft_strnew((sect->size / BYTE_IN_LINE_COUNT + 1)
+			* (1 + OTOOL_PTR_LEN + 1) + sect->size * (HEX_BYTE_LEN + 1));
+	if (!buf)
+		return (ft_putstr_fd("ft_otool: failed to allocate output buf\n", 2));
+	if (!text_start)
+		return (ft_putstr_fd("ft_otool: section > file size\n", 2));
+	prepare_buffer(buf, sect, text_start);
 	ft_putendl(buf);
 	ft_memdel((void**)&buf);
 }
