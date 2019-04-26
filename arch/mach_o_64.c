@@ -79,7 +79,6 @@ void	handle_64(char *ptr)
 	int						i;
 	struct mach_header_64	*header;
 	struct load_command		*lc;
-	struct symtab_command	*smtab;
 
 	header = (struct mach_header_64*)ptr;
 	ncmds = header->ncmds;
@@ -89,14 +88,15 @@ void	handle_64(char *ptr)
 	{
 		if (lc->cmd == LC_SYMTAB)
 		{
-			if (get_otool_mode())
-				break ;
-			smtab = (struct symtab_command*)lc;
-			print_symtab(smtab, ptr);
+			if (!get_otool_mode())
+				print_symtab((struct symtab_command*)lc, ptr);
 			break ;
 		} else if (lc->cmd == LC_SEGMENT_64)
 		{
-			save_sections_64((struct segment_command_64*)lc);
+			if (get_otool_mode())
+				otool_print_text_section_64((void*)lc, ptr);
+			else
+				save_sections_64((void*)lc);
 		}
 		lc = (void*)lc + lc->cmdsize;
 	}

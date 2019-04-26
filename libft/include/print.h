@@ -6,7 +6,7 @@
 /*   By: vrybalko <vrybalko@student.unit.ua>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/19 15:11:32 by vrybalko          #+#    #+#             */
-/*   Updated: 2017/11/19 15:27:19 by vrybalko         ###   ########.fr       */
+/*   Updated: 2019/04/26 11:01:20 by vitalii          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,8 @@ void				ft_print_array(char **arr);
 void				ft_puthex(unsigned long long n);
 void				ft_puthex_fill(unsigned long long n, char fill_char,
 						unsigned int width);
+void				ft_puthex_mem(unsigned long long n, void *mem);
+void				ft_puthex_fill_mem(unsigned long long n, char fill_char,
+						unsigned int width, void *mem);
 
 #endif
