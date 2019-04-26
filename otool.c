@@ -20,7 +20,6 @@ void			print_text_section(struct section_64 *sect)
 	const char	*text_start = safe_ptr((char*)ptr + sect->offset, sect->size);
 	int			i;
 
-	ft_putstr("./ft_nm:\nContents of (__TEXT,__text) section");
 	if (!text_start)
 		return (ft_putstr_fd("ft_otool: section > file size\n", 2));
 	i = -1;

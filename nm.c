@@ -14,13 +14,34 @@
 
 #define ERROR(x) {fprintf(stderr, x "\n"); return(EXIT_FAILURE);}
 
-void	nm(char *ptr, const char *filename)
+static void		print_otool_filename(uint64_t magic_num, const char *filename)
+{
+	const uint64_t	magic_nums[] = { MH_MAGIC_64, MH_CIGAM_64, MH_MAGIC,
+		MH_CIGAM
+	};
+	int				i;
+
+	i = -1;
+	while (++i < (int)(sizeof(magic_nums) / sizeof(magic_nums[0])))
+	{
+		if (magic_num == magic_nums[i])
+		{
+			ft_putstr(filename);
+			ft_putstr(":\nContents of (__TEXT,__text) section");
+			return ;
+		}
+	}
+}
+
+void			nm(char *ptr, const char *filename)
 {
 	uint64_t	magic_num;
 
 	if (ptr == NULL)
 		return ;
 	magic_num = *(uint32_t*)ptr;
+	if (get_otool_mode())
+		print_otool_filename(magic_num, filename);
 	if (magic_num == MH_MAGIC_64 || magic_num == MH_CIGAM_64)
 		handle_64(ptr);
 	else if (magic_num == MH_MAGIC || magic_num == MH_CIGAM)
@@ -39,7 +60,7 @@ void	nm(char *ptr, const char *filename)
 	}
 }
 
-int		process_file(const char *filename)
+int				process_file(const char *filename)
 {
 	int				fd;
 	char			*ptr;
