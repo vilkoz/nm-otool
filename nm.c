@@ -43,21 +43,22 @@ void			nm(char *ptr, const char *filename)
 	if (get_otool_mode())
 		print_otool_filename(magic_num, filename);
 	if (magic_num == MH_MAGIC_64 || magic_num == MH_CIGAM_64)
-		handle_64(ptr);
+		return handle_64(ptr);
 	else if (magic_num == MH_MAGIC || magic_num == MH_CIGAM)
-		handle_32(ptr);
+		return handle_32(ptr);
 	else if (magic_num == FAT_MAGIC || magic_num == FAT_CIGAM)
-		handle_fat_binary(ptr);
+		return handle_fat_binary(ptr, filename);
 	else if (magic_num == FAT_MAGIC_64 || magic_num == FAT_CIGAM_64)
-		handle_fat_binary_64(ptr);
+		return handle_fat_binary_64(ptr, filename);
 	else
 	{
 		magic_num = *(uint64_t*)ptr;
 		if (ft_strncmp((char*)&magic_num, ARMAG, SARMAG) == 0)
-			handle_archive(ptr, filename);
-		else
-			fprintf(stderr, "MY_NM: File format is not supported 0x%016llx\n", magic_num);
+			return handle_archive(ptr, filename);
 	}
+	ft_putstr_fd(filename, 1);
+	ft_putstr_fd(get_otool_mode() ? ": is not an object file\n" :
+			":unsupported\n", 1);
 }
 
 int				process_file(const char *filename)
