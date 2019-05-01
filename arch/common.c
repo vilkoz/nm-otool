@@ -1,11 +1,9 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
-
 #include "sections.h"
 #include "libft.h"
 #include "symbol_entry.h"
-
-#define IS_EXTERNAL(a) ((a) & N_EXT) // TODO: figure out where to place this
+#include "arch_private.h"
 
 static char	get_section_char(uint8_t n_sect)
 {

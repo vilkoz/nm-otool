@@ -1,8 +1,7 @@
 #include <ar.h>
 #include "libft.h"
 #include "safe_ptr.h"
-
-void	nm(char *ptr, char *filename);
+#include "arch_private.h"
 
 static void parse_ar_header(char **ptr)
 {

@@ -1,4 +1,3 @@
-#include <stdio.h> //fprintf
 #include <stdlib.h>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -11,8 +10,6 @@
 #include "libft.h"
 #include "safe_ptr.h"
 #include "otool.h"
-
-#define ERROR(x) {fprintf(stderr, x "\n"); return(EXIT_FAILURE);}
 
 static void		print_otool_filename(uint64_t magic_num, const char *filename)
 {
@@ -58,29 +55,28 @@ void			nm(char *ptr, const char *filename)
 	}
 	ft_putstr_fd(filename, 1);
 	ft_putstr_fd(get_otool_mode() ? ": is not an object file\n" :
-			":unsupported\n", 1);
+			": unsupported file type\n", 1);
 }
 
-int				process_file(const char *filename)
+void				process_file(const char *filename)
 {
 	int				fd;
 	char			*ptr;
 	struct stat		file_stat;
 
 	if ((fd = open(filename, O_RDONLY)) < 0)
-		ERROR("Can't open file");
+		return ft_putendl_fd("Can't open file", 2);
 	if (fstat(fd, &file_stat) < 0)
-		ERROR("Can't stat file");
+		return ft_putendl_fd("Can't stat file", 2);
 	if ((ptr = mmap(NULL, file_stat.st_size, PROT_READ, MAP_PRIVATE, fd, 0))
 			== MAP_FAILED)
-		ERROR("mmap error");
+		return ft_putendl_fd("mmap error", 2);
 	set_file_size(file_stat.st_size);
 	safe_ptr_base(ptr);
 	nm(ptr, filename);
 	clear_safe_ptr();
 	if (munmap(ptr, file_stat.st_size) < 0)
-		ERROR("munmap error");
-	return (EXIT_SUCCESS);
+		return ft_putendl_fd("munmap error", 2);
 }
 
 int		main(int ac, char **av)

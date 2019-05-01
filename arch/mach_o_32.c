@@ -1,7 +1,5 @@
 #include <mach-o/loader.h>
 #include <mach-o/nlist.h>
-
-#include <stdio.h> //printf
 #include "sections.h"
 #include "libft.h"
 #include "symbol_entry.h"
@@ -34,7 +32,7 @@ static t_vector	*fill_symbol_entries(struct symtab_command *sym, char *ptr)
 	return (l);
 }
 
-static int	sort_function(const void *a, const void* b)
+static int		sort_function(const void *a, const void* b)
 {
 	char	*name1;
 	char	*name2;
@@ -49,7 +47,7 @@ static int	sort_function(const void *a, const void* b)
 		((t_symbol_entry_32*)b)->nlist_entry->n_value);
 }
 
-static void	print_symtab(struct symtab_command *sym, char *ptr)
+static void		print_symtab(struct symtab_command *sym, char *ptr)
 {
 	t_vector			*v;
 	int					i;
@@ -73,7 +71,7 @@ static void	print_symtab(struct symtab_command *sym, char *ptr)
 	vector_delete(&v, NULL);
 }
 
-void	handle_32(char *ptr)
+void			handle_32(char *ptr)
 {
 	int						ncmds;
 	int						i;

@@ -2,12 +2,10 @@
 
 uint32_t	be2le(uint32_t i)
 {
-	return (
-			(((i & (0xff << 0))) << 16) |
+	return ((((i & (0xff << 0))) << 16) |
 			(((i & (0xff << 8))) << 8) |
 			(((i & (0xff << 16))) >> 8) |
-			(((i & (0xff << 24))) >> 24)
-			);
+			(((i & (0xff << 24))) >> 24));
 }
 
 uint64_t	be2le64(uint64_t in_num)

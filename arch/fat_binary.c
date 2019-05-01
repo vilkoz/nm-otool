@@ -3,10 +3,7 @@
 #include <mach-o/fat.h>
 #include "safe_ptr.h"
 #include "endian.h"
-
-#define CPU_SUBTYPE_X86_ALL		((cpu_subtype_t)3) // TODO: where to put dis
-
-void	nm(char *ptr, const char *filename);
+#include "arch_private.h"
 
 void handle_fat_binary(void *ptr, const char *filename)
 {
@@ -22,7 +19,7 @@ void handle_fat_binary(void *ptr, const char *filename)
 		if (be2le(fat_elem->cputype) == 0x10007 &&
 				(fat_elem->cpusubtype >> 24) == CPU_SUBTYPE_X86_ALL)
 			nm(safe_ptr(ptr + be2le(fat_elem->offset),
-					be2le(fat_elem->size)), filename);
+					be2le(fat_elem->size)), (char*)filename);
 		fat_elem++;
 	}
 }
@@ -41,7 +38,7 @@ void handle_fat_binary_64(void *ptr, const char *filename)
 		if (be2le(fat_elem->cputype) == 0x10007 &&
 				(fat_elem->cpusubtype >> 24) == CPU_SUBTYPE_X86_ALL)
 			nm(safe_ptr(ptr + be2le64(fat_elem->offset),
-					be2le64(fat_elem->size)), filename);
+					be2le64(fat_elem->size)), (char*)filename);
 		fat_elem++;
 	}
 }
